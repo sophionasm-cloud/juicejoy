@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "backend/public/index.php": {
-      "runtime": "php@8.3"
-    }
-  },
   "builds": [
     {
       "src": "frontend/**",
@@ -13,18 +8,14 @@
       }
     },
     {
-      "src": "backend/public/**",
-      "use": "vercel-php"
-    },
-    {
-      "src": "backend/**/*.php",
-      "use": "vercel-php"
+      "src": "frontend/api/**/*.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/public/index.php"
+      "dest": "frontend/api/$1.js"
     },
     {
       "src": "/(.*)",
