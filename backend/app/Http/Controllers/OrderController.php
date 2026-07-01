@@ -176,7 +176,7 @@ class OrderController extends Controller
         $chatId = env('TELEGRAM_CHAT_ID');
 
         if (!$botToken || !$chatId) {
-            Log::warning('Telegram credentials not configured');
+            Log::warning('Telegram credentials not configured. Order saved but not sent.');
             return;
         }
 

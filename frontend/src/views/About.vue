@@ -8,17 +8,24 @@
           <span class="logo-dot" />Juicie Ride
         </router-link>
 
-        <ul class="nav-links">
-          <li><router-link to="/">Home</router-link></li>
-          <li><router-link to="/products">Shop</router-link></li>
-          <li><router-link to="/about" class="active">About</router-link></li>
-          <li><router-link to="/benefits">Benefits</router-link></li>
-          <li><router-link to="/recipes">Recipes</router-link></li>
-          <li><router-link to="/contact">Contact</router-link></li>
+        <!-- Mobile Hamburger -->
+        <button class="hamburger" @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle menu">
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+        </button>
+
+        <ul class="nav-links" :class="{ active: mobileMenuOpen }">
+          <li><router-link to="/" @click="mobileMenuOpen = false">Home</router-link></li>
+          <li><router-link to="/products" @click="mobileMenuOpen = false">Shop</router-link></li>
+          <li><router-link to="/about" @click="mobileMenuOpen = false" class="active">About</router-link></li>
+          <li><router-link to="/benefits" @click="mobileMenuOpen = false">Benefits</router-link></li>
+          <li><router-link to="/recipes" @click="mobileMenuOpen = false">Recipes</router-link></li>
+          <li><router-link to="/contact" @click="mobileMenuOpen = false">Contact</router-link></li>
         </ul>
 
         <div class="nav-actions">
-          <button class="btn-order">Order Now</button>
+          <router-link to="/order" class="btn-order">Order Now</router-link>
           <div class="nav-icon" title="Search">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
               <circle cx="11" cy="11" r="8" />
@@ -205,15 +212,25 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useCartStore } from '../stores/cart.js'
 import CartDrawer from '../components/CartDrawer.vue'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger)
 
 const cartStore = useCartStore()
 const cartOpen = ref(false)
+const mobileMenuOpen = ref(false)
 
 const openCart = () => {
   cartOpen.value = true
 }
 
-// Scroll animations
+const closeCart = () => {
+  cartOpen.value = false
+}
+
+// ─── SCROLL ANIMATIONS ────────────────────────────────────────
 const scrollEl = ref(null)
 const slide1 = ref(null)
 const slide2 = ref(null)
@@ -259,6 +276,7 @@ onUnmounted(() => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Inter:wght@300;400;500;600&display=swap');
 
+/* ═══ ROOT ══════════════════════════════════════════════════ */
 .about-page {
   background: #000;
   color: #fff;
@@ -267,7 +285,7 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-/* ═══ NAVBAR ══════════════════════════════════════════════════ */
+/* ═══ SUPER TRANSPARENT NAVBAR ══════════════════════════════ */
 .super-nav {
   position: fixed;
   top: 0;
@@ -318,6 +336,8 @@ onUnmounted(() => {
   gap: 36px;
   list-style: none;
   align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-links a, .nav-links router-link {
@@ -343,8 +363,7 @@ onUnmounted(() => {
   transition: width 0.3s ease;
 }
 
-.nav-links a:hover, .nav-links router-link:hover,
-.nav-links a.active, .nav-links router-link.active {
+.nav-links a:hover, .nav-links router-link:hover {
   color: rgba(255, 255, 255, 0.90);
 }
 
@@ -371,6 +390,8 @@ onUnmounted(() => {
   border-radius: 100px;
   cursor: pointer;
   transition: background 0.25s, transform 0.2s;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .btn-order:hover {
@@ -415,7 +436,41 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-/* ═══ HERO SECTION ══════════════════════════════════════════ */
+/* ─── HAMBURGER MENU ──────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 10;
+}
+
+.hamburger-line {
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger-line.open:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-line.open:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger-line.open:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ─── HERO SECTION ══════════════════════════════════════════ */
 .hero-section {
   height: 100vh;
   display: flex;
@@ -774,10 +829,68 @@ onUnmounted(() => {
   .super-nav {
     padding: 0 20px;
   }
+
+  .hamburger {
+    display: flex;
+  }
+
   .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 75%;
+    max-width: 320px;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    background: rgba(10, 10, 20, 0.98);
+    backdrop-filter: blur(20px);
+    padding: 40px 30px;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 0;
+    z-index: 5;
+    box-shadow: -10px 0 60px rgba(0, 0, 0, 0.6);
+  }
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  .nav-links a, .nav-links router-link {
+    font-size: 18px;
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    width: 100%;
+    text-align: center;
+  }
+
+  .nav-links a:hover, .nav-links router-link:hover {
+    color: #FF8C42 !important;
+    background: rgba(255, 140, 66, 0.1);
+  }
+
+  .nav-links a::after, .nav-links router-link::after {
     display: none;
   }
-  
+
+  .btn-order {
+    padding: 8px 16px;
+    font-size: 10px;
+  }
+
+  .nav-icon {
+    width: 36px;
+    height: 36px;
+  }
+
   .slide-content {
     padding: 0 24px;
     flex-direction: column !important;
@@ -813,6 +926,58 @@ onUnmounted(() => {
   
   .hero-title {
     font-size: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .super-nav {
+    padding: 0 12px;
+  }
+
+  .nav-logo {
+    font-size: 18px;
+  }
+
+  .btn-order {
+    padding: 6px 12px;
+    font-size: 9px;
+  }
+
+  .nav-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cart-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+    top: -3px;
+    right: -3px;
+  }
+
+  .hamburger-line {
+    width: 20px;
+    height: 2px;
+  }
+
+  .hamburger {
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .nav-links {
+    width: 80%;
+    gap: 20px;
+    padding: 30px;
+  }
+
+  .nav-links a, .nav-links router-link {
+    font-size: 16px;
+  }
+
+  .hero-title {
+    font-size: 32px;
   }
 }
 </style>

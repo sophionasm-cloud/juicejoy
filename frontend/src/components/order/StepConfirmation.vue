@@ -35,8 +35,9 @@
         <p>You will receive a confirmation via Telegram shortly.</p>
       </div>
       
-      <button class="confirm-btn" @click="confirmOrder">
-        <span>Confirm Order</span>
+      <button class="confirm-btn" @click="confirmOrder" :disabled="loading">
+        <span v-if="!loading">Confirm Order</span>
+        <span v-else>Processing...</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <line x1="5" y1="12" x2="19" y2="12"/>
           <polyline points="12 5 19 12 12 19"/>
@@ -47,12 +48,14 @@
 </template>
 
 <script setup>
-import { computed, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useCartStore } from '../../stores/cart.js'
 import { useOrderStore } from '../../stores/order.js'
+import axios from 'axios'
 
 const cartStore = useCartStore()
 const orderStore = useOrderStore()
+const loading = ref(false)
 
 const orderNumber = computed(() => orderStore.generateOrderNumber())
 
@@ -74,45 +77,46 @@ const deliveryTime = computed(() => {
   return methods[orderStore.orderData.delivery] || '1-2 hours'
 })
 
-const confirmOrder = () => {
-  // Build the Telegram message
-  const items = cartStore.items.map(item => 
-    `${item.name} x${item.quantity} — ETB ${(item.price * 10 * item.quantity).toFixed(2)}`
-  ).join('%0A')
+const confirmOrder = async () => {
+  loading.value = true
   
-  const totalETB = (orderStore.total * 10).toFixed(2)
-  const subtotalETB = (orderStore.subtotal * 10).toFixed(2)
-  
-  const message = `
-🍊 *New Juicie Ride Order* 🍊
+  try {
+    const orderData = {
+      customer: {
+        fullName: orderStore.orderData.customer.fullName,
+        phone: orderStore.orderData.customer.phone,
+        email: orderStore.orderData.customer.email || '',
+        address: orderStore.orderData.customer.address,
+        city: orderStore.orderData.customer.city,
+        notes: orderStore.orderData.customer.notes || ''
+      },
+      items: cartStore.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      delivery: orderStore.orderData.delivery,
+      subtotal: orderStore.subtotal,
+      total: orderStore.total
+    }
 
-*Order Number:* ${orderNumber.value}
-*Date:* ${new Date().toLocaleString()}
-
-*Customer Details:*
-Name: ${orderStore.orderData.customer.fullName}
-Phone: ${orderStore.orderData.customer.phone}
-Email: ${orderStore.orderData.customer.email || 'Not provided'}
-Address: ${orderStore.orderData.customer.address}
-City: ${orderStore.orderData.customer.city}
-
-*Products:*
-${items}
-
-*Delivery:* ${deliveryLabel.value}
-
-*Summary:*
-Subtotal: ETB ${subtotalETB}
-Delivery: ETB ${orderStore.deliveryFee.toFixed(2)}
-Total: ETB ${totalETB}
-
-*Notes:* ${orderStore.orderData.customer.notes || 'None'}
-
-Thank you for ordering from Juicie Ride! 🧃
-  `.trim()
-  
-  const url = `https://t.me/sophitily?text=${encodeURIComponent(message)}`
-  window.open(url, '_blank')
+    const response = await axios.post('/api/orders', orderData)
+    
+    if (response.data.success) {
+      alert('✅ Order placed successfully! Check Telegram for confirmation.')
+      
+      cartStore.clearCart()
+      orderStore.reset()
+      
+      window.location.href = '/'
+    }
+  } catch (error) {
+    console.error('Order failed:', error)
+    alert('❌ Something went wrong. Please try again.')
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -212,6 +216,7 @@ Thank you for ordering from Juicie Ride! 🧃
 .confirm-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   padding: 16px 40px;
   background: linear-gradient(135deg, #FF8C42, #F4A636);
@@ -223,18 +228,24 @@ Thank you for ordering from Juicie Ride! 🧃
   color: #000;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
 }
 
-.confirm-btn:hover {
+.confirm-btn:hover:not(:disabled) {
   transform: translateY(-3px) scale(1.02);
   box-shadow: 0 20px 40px rgba(255,140,66,0.3);
+}
+
+.confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .confirm-btn svg {
   transition: transform 0.3s ease;
 }
 
-.confirm-btn:hover svg {
+.confirm-btn:hover:not(:disabled) svg {
   transform: translateX(4px);
 }
 

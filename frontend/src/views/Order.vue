@@ -1,31 +1,39 @@
 <template>
   <div class="order-page">
-    <!-- ─── NAVBAR ──────────────────────────────────────────── -->
-    <nav class="navbar">
-      <div class="nav-inner">
-        <a href="/" class="nav-logo">
-          <span class="logo-dot" />Juicie Ride
-        </a>
 
-        <ul class="nav-links">
-          <li><a href="/">Home</a></li>
-          <li><a href="/products">Shop</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/benefits">Benefits</a></li>
-          <li><a href="/recipes">Recipes</a></li>
-          <li><a href="/contact">Contact</a></li>
+    <!-- ─── SUPER TRANSPARENT NAVBAR ──────────────────────── -->
+    <nav class="super-nav">
+      <div class="nav-inner">
+        <router-link to="/" class="nav-logo">
+          <span class="logo-dot" />Juicie Ride
+        </router-link>
+
+        <!-- Mobile Hamburger -->
+        <button class="hamburger" @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle menu">
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+        </button>
+
+        <ul class="nav-links" :class="{ active: mobileMenuOpen }">
+          <li><router-link to="/" @click="mobileMenuOpen = false">Home</router-link></li>
+          <li><router-link to="/products" @click="mobileMenuOpen = false">Shop</router-link></li>
+          <li><router-link to="/about" @click="mobileMenuOpen = false">About</router-link></li>
+          <li><router-link to="/benefits" @click="mobileMenuOpen = false">Benefits</router-link></li>
+          <li><router-link to="/recipes" @click="mobileMenuOpen = false">Recipes</router-link></li>
+          <li><router-link to="/contact" @click="mobileMenuOpen = false">Contact</router-link></li>
         </ul>
 
         <div class="nav-actions">
-          <a href="/checkout" class="btn-order">Order Now</a>
+          <router-link to="/order" class="btn-order">Order Now</router-link>
           <div class="nav-icon" title="Search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </div>
           <div class="nav-icon" title="Cart" @click="openCart">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="9" cy="21" r="1" />
               <circle cx="20" cy="21" r="1" />
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
@@ -36,16 +44,7 @@
       </div>
     </nav>
 
-    <!-- ─── FLOATING FRUITS ────────────────────────────────── -->
-    <div class="floating-fruits">
-      <span class="fruit fruit-1">🍊</span>
-      <span class="fruit fruit-2">🍋</span>
-      <span class="fruit fruit-3">🍇</span>
-      <span class="fruit fruit-4">🍉</span>
-      <span class="fruit fruit-5">🍓</span>
-    </div>
-
-    <!-- ─── ORDER CONTAINER ────────────────────────────────── -->
+    <!-- ─── ORDER CONTENT ────────────────────────────────────── -->
     <div class="order-container">
       <div class="order-header">
         <h1 class="order-title">Place Your Order</h1>
@@ -104,6 +103,7 @@
 
     <!-- ─── CART DRAWER ────────────────────────────────────── -->
     <CartDrawer :isOpen="cartOpen" @close="closeCart" />
+
   </div>
 </template>
 
@@ -124,6 +124,7 @@ const cartStore = useCartStore()
 const orderStore = useOrderStore()
 
 const cartOpen = ref(false)
+const mobileMenuOpen = ref(false)
 
 const openCart = () => {
   cartOpen.value = true
@@ -166,8 +167,8 @@ const nextStep = () => {
   overflow-x: hidden;
 }
 
-/* ═══ NAVBAR ════════════════════════════════════════════════ */
-.navbar {
+/* ═══ SUPER TRANSPARENT NAVBAR ══════════════════════════════ */
+.super-nav {
   position: fixed;
   top: 0;
   left: 0;
@@ -217,9 +218,11 @@ const nextStep = () => {
   gap: 36px;
   list-style: none;
   align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
-.nav-links a {
+.nav-links a, .nav-links router-link {
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0.1em;
@@ -231,7 +234,7 @@ const nextStep = () => {
   transition: color 0.3s ease;
 }
 
-.nav-links a::after {
+.nav-links a::after, .nav-links router-link::after {
   content: '';
   position: absolute;
   bottom: -2px;
@@ -242,11 +245,11 @@ const nextStep = () => {
   transition: width 0.3s ease;
 }
 
-.nav-links a:hover {
+.nav-links a:hover, .nav-links router-link:hover {
   color: rgba(255, 255, 255, 0.90);
 }
 
-.nav-links a:hover::after {
+.nav-links a.active::after, .nav-links router-link.active::after {
   width: 100%;
 }
 
@@ -315,38 +318,38 @@ const nextStep = () => {
   justify-content: center;
 }
 
-/* ═══ FLOATING FRUITS ══════════════════════════════════════ */
-.floating-fruits {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
+/* ─── HAMBURGER MENU ──────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 10;
 }
 
-.fruit {
-  position: absolute;
-  font-size: 40px;
-  opacity: 0.04;
-  animation: floatFruit 10s ease-in-out infinite;
+.hamburger-line {
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
 }
 
-.fruit-1 { top: 5%; left: 3%; animation-delay: 0s; font-size: 50px; }
-.fruit-2 { top: 15%; right: 5%; animation-delay: 1.5s; font-size: 35px; }
-.fruit-3 { bottom: 30%; left: 2%; animation-delay: 3s; font-size: 45px; }
-.fruit-4 { bottom: 20%; right: 3%; animation-delay: 0.8s; font-size: 55px; }
-.fruit-5 { top: 50%; left: 8%; animation-delay: 2s; font-size: 30px; }
+.hamburger-line.open:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
 
-@keyframes floatFruit {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-  }
-  33% {
-    transform: translateY(-30px) rotate(10deg) scale(1.05);
-  }
-  66% {
-    transform: translateY(15px) rotate(-5deg) scale(0.95);
-  }
+.hamburger-line.open:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger-line.open:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
 }
 
 /* ═══ ORDER CONTAINER ══════════════════════════════════════ */
@@ -484,14 +487,71 @@ const nextStep = () => {
 
 /* ═══ RESPONSIVE ══════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .navbar {
+  .super-nav {
     padding: 0 20px;
   }
-  
+
+  .hamburger {
+    display: flex;
+  }
+
   .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 75%;
+    max-width: 320px;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    background: rgba(10, 10, 20, 0.98);
+    backdrop-filter: blur(20px);
+    padding: 40px 30px;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 0;
+    z-index: 5;
+    box-shadow: -10px 0 60px rgba(0, 0, 0, 0.6);
+  }
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  .nav-links a, .nav-links router-link {
+    font-size: 18px;
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    width: 100%;
+    text-align: center;
+  }
+
+  .nav-links a:hover, .nav-links router-link:hover {
+    color: #FF8C42 !important;
+    background: rgba(255, 140, 66, 0.1);
+  }
+
+  .nav-links a::after, .nav-links router-link::after {
     display: none;
   }
-  
+
+  .btn-order {
+    padding: 8px 16px;
+    font-size: 10px;
+  }
+
+  .nav-icon {
+    width: 36px;
+    height: 36px;
+  }
+
   .order-container {
     padding: 80px 16px 40px;
   }
@@ -504,13 +564,55 @@ const nextStep = () => {
     padding: 12px 24px;
     font-size: 13px;
   }
-  
-  .floating-fruits {
-    display: none;
-  }
 }
 
 @media (max-width: 480px) {
+  .super-nav {
+    padding: 0 12px;
+  }
+
+  .nav-logo {
+    font-size: 18px;
+  }
+
+  .btn-order {
+    padding: 6px 12px;
+    font-size: 9px;
+  }
+
+  .nav-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cart-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+    top: -3px;
+    right: -3px;
+  }
+
+  .hamburger-line {
+    width: 20px;
+    height: 2px;
+  }
+
+  .hamburger {
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .nav-links {
+    width: 80%;
+    gap: 20px;
+    padding: 30px;
+  }
+
+  .nav-links a, .nav-links router-link {
+    font-size: 16px;
+  }
+
   .order-title {
     font-size: 24px;
   }

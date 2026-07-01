@@ -1,24 +1,30 @@
 <template>
   <div class="contact-page">
 
-    <!-- ─── NAVBAR ──────────────────────────────────────────── -->
+    <!-- ─── NAVBAR ──────────────────────────────────────────────── -->
     <nav class="navbar">
       <div class="nav-inner">
-        <a href="/" class="nav-logo">
+        <router-link to="/" class="nav-logo">
           <span class="logo-dot" />Juicie Ride
-        </a>
+        </router-link>
 
-        <ul class="nav-links">
-          <li><a href="/">Home</a></li>
-          <li><a href="/products">Shop</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/benefits">Benefits</a></li>
-          <li><a href="/recipes">Recipes</a></li>
-          <li><a href="/contact" class="active">Contact</a></li>
+        <button class="hamburger" @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle menu">
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+        </button>
+
+        <ul class="nav-links" :class="{ active: mobileMenuOpen }">
+          <li><router-link to="/" @click="mobileMenuOpen = false">Home</router-link></li>
+          <li><router-link to="/products" @click="mobileMenuOpen = false">Shop</router-link></li>
+          <li><router-link to="/about" @click="mobileMenuOpen = false">About</router-link></li>
+          <li><router-link to="/benefits" @click="mobileMenuOpen = false">Benefits</router-link></li>
+          <li><router-link to="/recipes" @click="mobileMenuOpen = false">Recipes</router-link></li>
+          <li><router-link to="/contact" @click="mobileMenuOpen = false" class="active">Contact</router-link></li>
         </ul>
 
         <div class="nav-actions">
-          <a href="/checkout" class="btn-order">Order Now</a>
+          <router-link to="/order" class="btn-order">Order Now</router-link>
           <div class="nav-icon" title="Search">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
               <circle cx="11" cy="11" r="8" />
@@ -37,6 +43,9 @@
       </div>
     </nav>
 
+    <!-- overlay for mobile menu -->
+    <div class="nav-overlay" :class="{ active: mobileMenuOpen }" @click="mobileMenuOpen = false" />
+
     <!-- ─── FLOATING FRUIT DECORATIONS ────────────────────── -->
     <div class="floating-fruits">
       <span class="fruit fruit-1">🍊</span>
@@ -44,9 +53,6 @@
       <span class="fruit fruit-3">🍇</span>
       <span class="fruit fruit-4">🍉</span>
       <span class="fruit fruit-5">🍓</span>
-      <span class="fruit fruit-6">🥝</span>
-      <span class="fruit fruit-7">🍑</span>
-      <span class="fruit fruit-8">🍍</span>
     </div>
 
     <!-- ─── HERO SECTION ────────────────────────────────────── -->
@@ -68,8 +74,7 @@
           </h1>
           <p class="hero-sub">
             We'd love to hear from you. Whether you have questions about our fresh juices,
-            partnership opportunities, catering services, or simply want to say hello,
-            our team is ready to help.
+            partnership opportunities, or simply want to say hello, our team is ready to help.
           </p>
         </div>
       </div>
@@ -110,10 +115,9 @@
           <div class="social-section">
             <h4 class="social-label">Follow Us</h4>
             <div class="social-icons">
-              <!-- Instagram -->
-              <a href="https://instagram.com/juicieride" target="_blank" class="social-icon instagram" aria-label="Instagram">
+              <a href="#" class="social-icon instagram">
                 <div class="icon-wrapper">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
                     <circle cx="12" cy="12" r="5"/>
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
@@ -124,10 +128,9 @@
                 <div class="social-badge">12.5K</div>
               </a>
 
-              <!-- YouTube -->
-              <a href="https://youtube.com/@juicieride" target="_blank" class="social-icon youtube" aria-label="YouTube">
+              <a href="#" class="social-icon youtube">
                 <div class="icon-wrapper">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
                     <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
                   </svg>
@@ -137,10 +140,9 @@
                 <div class="social-badge">8.2K</div>
               </a>
 
-              <!-- Telegram -->
-              <a href="https://t.me/juicieride" target="_blank" class="social-icon telegram" aria-label="Telegram">
+              <a href="#" class="social-icon telegram">
                 <div class="icon-wrapper">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path d="M22 2L11 13"/>
                     <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
                   </svg>
@@ -150,43 +152,15 @@
                 <div class="social-badge">@JuicieRide</div>
               </a>
 
-              <!-- Facebook -->
-              <a href="https://facebook.com/juicieride" target="_blank" class="social-icon facebook" aria-label="Facebook">
+              <a href="#" class="social-icon facebook">
                 <div class="icon-wrapper">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
                   </svg>
                   <div class="icon-glow facebook-glow" />
                 </div>
                 <span>Facebook</span>
                 <div class="social-badge">15.8K</div>
-              </a>
-
-              <!-- TikTok -->
-              <a href="https://tiktok.com/@juicieride" target="_blank" class="social-icon tiktok" aria-label="TikTok">
-                <div class="icon-wrapper">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 8a6 6 0 0 0 6 6v4a10 10 0 0 1-10-10v-8h4v8z"/>
-                    <path d="M10 12a4 4 0 1 1-4 4v-4h4z"/>
-                  </svg>
-                  <div class="icon-glow tiktok-glow" />
-                </div>
-                <span>TikTok</span>
-                <div class="social-badge">6.4K</div>
-              </a>
-
-              <!-- Twitter/X -->
-              <a href="https://twitter.com/juicieride" target="_blank" class="social-icon twitter" aria-label="Twitter/X">
-                <div class="icon-wrapper">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4l11.733 16h4.267l-11.733 -16z"/>
-                    <path d="M4 20l6.768 -6.768"/>
-                    <path d="M19 4l-6.768 6.768"/>
-                  </svg>
-                  <div class="icon-glow twitter-glow" />
-                </div>
-                <span>Twitter/X</span>
-                <div class="social-badge">3.1K</div>
               </a>
             </div>
           </div>
@@ -199,44 +173,44 @@
 
             <div class="form-row">
               <div class="form-group">
-                <input type="text" id="firstName" v-model="form.firstName" required />
+                <input type="text" id="firstName" v-model="form.firstName" placeholder=" " required />
                 <label for="firstName">First Name</label>
                 <span class="focus-border" />
               </div>
               <div class="form-group">
-                <input type="text" id="lastName" v-model="form.lastName" required />
+                <input type="text" id="lastName" v-model="form.lastName" placeholder=" " required />
                 <label for="lastName">Last Name</label>
                 <span class="focus-border" />
               </div>
             </div>
 
             <div class="form-group">
-              <input type="email" id="email" v-model="form.email" required />
+              <input type="email" id="email" v-model="form.email" placeholder=" " required />
               <label for="email">Email Address</label>
               <span class="focus-border" />
             </div>
 
             <div class="form-group">
-              <input type="tel" id="phone" v-model="form.phone" />
+              <input type="tel" id="phone" v-model="form.phone" placeholder=" " />
               <label for="phone">Phone Number</label>
               <span class="focus-border" />
             </div>
 
             <div class="form-group">
-              <input type="text" id="subject" v-model="form.subject" required />
+              <input type="text" id="subject" v-model="form.subject" placeholder=" " required />
               <label for="subject">Subject</label>
               <span class="focus-border" />
             </div>
 
             <div class="form-group">
-              <textarea id="message" v-model="form.message" rows="5" required></textarea>
+              <textarea id="message" v-model="form.message" rows="5" placeholder=" " required></textarea>
               <label for="message">Message</label>
               <span class="focus-border" />
             </div>
 
             <button type="submit" class="submit-btn">
               <span>Send Message</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="5" y1="12" x2="19" y2="12"/>
                 <polyline points="12 5 19 12 12 19"/>
               </svg>
@@ -269,6 +243,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const cartStore = useCartStore()
 const cartOpen = ref(false)
+const mobileMenuOpen = ref(false)
 
 const openCart = () => {
   cartOpen.value = true
@@ -307,141 +282,181 @@ Message: ${message}
 }
 
 // ─── ANIMATIONS ──────────────────────────────────────────────
+let ctx
+
 onMounted(() => {
-  // ─── HERO LETTER STAGGER ─────────────────────────────────
-  const words = document.querySelectorAll('.word')
-  gsap.from(words, {
-    duration: 1.2,
-    y: 80,
-    opacity: 0,
-    rotateX: -15,
-    stagger: 0.08,
-    ease: 'back.out(1.7)',
-    scrollTrigger: {
-      trigger: '.hero-text',
-      start: 'top 80%',
-      toggleActions: 'play none none reverse'
-    }
-  })
+  // Lock body scroll when mobile menu is open
+  ctx = gsap.context(() => {
+    const mm = gsap.matchMedia()
 
-  // ─── INFO CARDS ──────────────────────────────────────────
-  gsap.from('.info-card', {
-    duration: 0.9,
-    x: -60,
-    opacity: 0,
-    stagger: 0.15,
-    ease: 'power3.out',
-    scrollTrigger: {
-      trigger: '.contact-left',
-      start: 'top 70%',
-      toggleActions: 'play none none reverse'
-    }
-  })
+    // Master timeline for hero — smooth cinematic sequence instead of separate triggers
+    mm.add('(min-width: 769px)', () => {
+      const heroTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.hero-text',
+          start: 'top 85%',
+          toggleActions: 'play none none reverse'
+        }
+      })
 
-  // ─── FORM SLIDE ──────────────────────────────────────────
-  gsap.from('.contact-form', {
-    duration: 1,
-    x: 60,
-    opacity: 0,
-    ease: 'power3.out',
-    scrollTrigger: {
-      trigger: '.contact-right',
-      start: 'top 70%',
-      toggleActions: 'play none none reverse'
-    }
-  })
+      heroTl
+        .from('.hero-eyebrow', { duration: 0.6, y: 20, opacity: 0, ease: 'power2.out' })
+        .from('.word', {
+          duration: 1,
+          y: 60,
+          opacity: 0,
+          rotateX: -10,
+          stagger: 0.06,
+          ease: 'power4.out'
+        }, '-=0.3')
+        .from('.hero-sub', { duration: 0.8, y: 20, opacity: 0, ease: 'power2.out' }, '-=0.5')
 
-  // ─── FORM INPUTS STAGGER ─────────────────────────────────
-  gsap.from('.form-group', {
-    duration: 0.7,
-    y: 30,
-    opacity: 0,
-    stagger: 0.08,
-    ease: 'power2.out',
-    scrollTrigger: {
-      trigger: '.contact-form',
-      start: 'top 70%',
-      toggleActions: 'play none none reverse'
-    }
-  })
+      gsap.from('.fruit', {
+        duration: 1.6,
+        scale: 0,
+        opacity: 0,
+        stagger: 0.15,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.hero-section',
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        }
+      })
 
-  // ─── SOCIAL ICONS ────────────────────────────────────────
-  gsap.from('.social-icon', {
-    duration: 0.8,
-    y: 30,
-    opacity: 0,
-    stagger: 0.1,
-    ease: 'back.out(1.7)',
-    scrollTrigger: {
-      trigger: '.social-section',
-      start: 'top 75%',
-      toggleActions: 'play none none reverse'
-    }
-  })
+      gsap.from('.info-card', {
+        duration: 0.8,
+        x: -50,
+        opacity: 0,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.contact-left',
+          start: 'top 75%',
+          toggleActions: 'play none none reverse'
+        }
+      })
 
-  // ─── FLOATING FRUITS ────────────────────────────────────
-  gsap.from('.fruit', {
-    duration: 1.5,
-    scale: 0,
-    opacity: 0,
-    stagger: 0.15,
-    ease: 'back.out(2)',
-    scrollTrigger: {
-      trigger: '.hero-section',
-      start: 'top 80%',
-      toggleActions: 'play none none reverse'
-    }
+      const formTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.contact-right',
+          start: 'top 75%',
+          toggleActions: 'play none none reverse'
+        }
+      })
+
+      formTl
+        .from('.contact-form', { duration: 0.9, x: 50, opacity: 0, ease: 'power3.out' })
+        .from('.form-group', {
+          duration: 0.6,
+          y: 24,
+          opacity: 0,
+          stagger: 0.06,
+          ease: 'power2.out'
+        }, '-=0.5')
+
+      gsap.from('.social-icon', {
+        duration: 0.7,
+        y: 24,
+        opacity: 0,
+        stagger: 0.08,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.social-section',
+          start: 'top 80%',
+          toggleActions: 'play none none reverse'
+        }
+      })
+    })
+
+    // ── Reduced / lighter motion for mobile so it feels smooth, not janky ──
+    mm.add('(max-width: 768px)', () => {
+      gsap.from('.word', {
+        duration: 0.7,
+        y: 24,
+        opacity: 0,
+        stagger: 0.05,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.hero-text',
+          start: 'top 90%',
+          toggleActions: 'play none none reverse'
+        }
+      })
+
+      gsap.from('.hero-sub', {
+        duration: 0.6,
+        y: 16,
+        opacity: 0,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.hero-text',
+          start: 'top 85%',
+          toggleActions: 'play none none reverse'
+        }
+      })
+
+      gsap.from('.info-card', {
+        duration: 0.6,
+        y: 20,
+        opacity: 0,
+        stagger: 0.08,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.contact-left',
+          start: 'top 85%',
+          toggleActions: 'play none none reverse'
+        }
+      })
+
+      gsap.from('.contact-form', {
+        duration: 0.7,
+        y: 30,
+        opacity: 0,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.contact-right',
+          start: 'top 88%',
+          toggleActions: 'play none none reverse'
+        }
+      })
+
+      gsap.from('.social-icon', {
+        duration: 0.5,
+        y: 16,
+        opacity: 0,
+        stagger: 0.06,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.social-section',
+          start: 'top 90%',
+          toggleActions: 'play none none reverse'
+        }
+      })
+    })
   })
+})
+
+onUnmounted(() => {
+  ctx && ctx.revert()
+  document.body.style.overflow = ''
+})
+
+import { watch } from 'vue'
+watch(mobileMenuOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
 })
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Inter:wght@300;400;500;600&display=swap');
 
-/* ═══ ROOT ══════════════════════════════════════════════════ */
 .contact-page {
   background: #000;
   color: #fff;
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
   min-height: 100vh;
-}
-
-/* ═══ FLOATING FRUITS ══════════════════════════════════════ */
-.floating-fruits {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.fruit {
-  position: absolute;
-  font-size: 40px;
-  opacity: 0.06;
-  animation: floatFruit 8s ease-in-out infinite;
-}
-
-.fruit-1 { top: 5%; left: 3%; animation-delay: 0s; font-size: 50px; }
-.fruit-2 { top: 15%; right: 5%; animation-delay: 1.2s; font-size: 35px; }
-.fruit-3 { bottom: 30%; left: 2%; animation-delay: 2.5s; font-size: 45px; }
-.fruit-4 { bottom: 20%; right: 3%; animation-delay: 0.8s; font-size: 55px; }
-.fruit-5 { top: 50%; left: 8%; animation-delay: 1.8s; font-size: 30px; }
-.fruit-6 { top: 60%; right: 8%; animation-delay: 3s; font-size: 40px; }
-.fruit-7 { bottom: 10%; left: 15%; animation-delay: 0.5s; font-size: 35px; }
-.fruit-8 { top: 8%; left: 50%; animation-delay: 2s; font-size: 30px; }
-
-@keyframes floatFruit {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-  }
-  33% {
-    transform: translateY(-20px) rotate(10deg) scale(1.05);
-  }
-  66% {
-    transform: translateY(10px) rotate(-5deg) scale(0.95);
-  }
 }
 
 /* ═══ NAVBAR ════════════════════════════════════════════════ */
@@ -495,9 +510,11 @@ onMounted(() => {
   gap: 36px;
   list-style: none;
   align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
-.nav-links a {
+.nav-links a, .nav-links router-link {
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0.1em;
@@ -509,7 +526,7 @@ onMounted(() => {
   transition: color 0.3s ease;
 }
 
-.nav-links a::after {
+.nav-links a::after, .nav-links router-link::after {
   content: '';
   position: absolute;
   bottom: -2px;
@@ -520,12 +537,11 @@ onMounted(() => {
   transition: width 0.3s ease;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
+.nav-links a:hover, .nav-links router-link:hover {
   color: rgba(255, 255, 255, 0.90);
 }
 
-.nav-links a.active::after {
+.nav-links a.active::after, .nav-links router-link.active::after {
   width: 100%;
 }
 
@@ -594,6 +610,392 @@ onMounted(() => {
   justify-content: center;
 }
 
+/* ─── HAMBURGER MENU ──────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 10;
+}
+
+.hamburger-line {
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger-line.open:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-line.open:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger-line.open:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ─── MOBILE OVERLAY ───────────────────────────────────────── */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.nav-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ─── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 75%;
+    max-width: 320px;
+    height: 100vh;
+    height: 100dvh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    background: rgba(10, 10, 20, 0.98);
+    backdrop-filter: blur(20px);
+    padding: 40px 30px;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 0;
+    z-index: 5;
+    box-shadow: -10px 0 60px rgba(0, 0, 0, 0.6);
+    overflow-y: auto;
+  }
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  .nav-links li {
+    width: 100%;
+  }
+
+  .nav-links a, .nav-links router-link {
+    font-size: 18px;
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    width: 100%;
+    text-align: center;
+    display: block;
+  }
+
+  .nav-links a:hover, .nav-links router-link:hover {
+    color: #FF8C42 !important;
+    background: rgba(255, 140, 66, 0.1);
+  }
+
+  .nav-links a::after, .nav-links router-link::after {
+    display: none;
+  }
+
+  .btn-order {
+    padding: 8px 16px;
+    font-size: 10px;
+  }
+
+  .nav-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* ── Hero ── */
+  .hero-section {
+    min-height: auto;
+    padding: 100px 20px 40px;
+  }
+
+  .hero-title {
+    font-size: clamp(32px, 9vw, 44px);
+    margin-bottom: 16px;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .hero-eyebrow {
+    margin-bottom: 16px;
+  }
+
+  /* ── Contact layout ── */
+  .contact-section {
+    padding: 20px 20px 60px;
+  }
+
+  .contact-container {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .contact-left {
+    gap: 36px;
+  }
+
+  .info-cards {
+    gap: 14px;
+  }
+
+  .info-card {
+    padding: 16px 18px;
+    gap: 16px;
+    border-radius: 14px;
+  }
+
+  .info-icon {
+    font-size: 24px;
+  }
+
+  .info-value {
+    font-size: 14px;
+    word-break: break-word;
+  }
+
+  .social-section {
+    padding-top: 32px;
+  }
+
+  .social-icons {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .social-icon {
+    padding: 14px 16px;
+  }
+
+  /* ── Form ── */
+  .contact-form {
+    padding: 28px 20px;
+    border-radius: 18px;
+  }
+
+  .form-title {
+    font-size: 22px;
+    margin-bottom: 24px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 14px 14px 8px;
+    font-size: 16px; /* prevents iOS zoom-on-focus */
+    border-radius: 10px;
+  }
+
+  .submit-btn {
+    padding: 15px 24px;
+    font-size: 14px;
+  }
+
+  .footer {
+    padding: 24px 20px;
+  }
+
+  .footer-text {
+    font-size: 12px;
+  }
+
+  .floating-fruits {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 12px;
+    height: 64px;
+  }
+
+  .nav-logo {
+    font-size: 17px;
+  }
+
+  .btn-order {
+    padding: 6px 12px;
+    font-size: 9px;
+  }
+
+  .nav-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cart-badge {
+    width: 15px;
+    height: 15px;
+    font-size: 8px;
+    top: -3px;
+    right: -3px;
+  }
+
+  .hamburger-line {
+    width: 20px;
+    height: 2px;
+  }
+
+  .hamburger {
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .nav-links {
+    width: 82%;
+    gap: 18px;
+    padding: 30px 24px;
+  }
+
+  .nav-links a, .nav-links router-link {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
+
+  .hero-section {
+    padding: 90px 16px 32px;
+  }
+
+  .hero-title {
+    font-size: clamp(28px, 10vw, 34px);
+  }
+
+  .hero-sub {
+    font-size: 14px;
+  }
+
+  .contact-section {
+    padding: 16px 16px 48px;
+  }
+
+  .contact-container {
+    gap: 36px;
+  }
+
+  .contact-form {
+    padding: 22px 16px;
+  }
+
+  .form-title {
+    font-size: 19px;
+  }
+
+  .info-card {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .info-icon {
+    font-size: 20px;
+  }
+
+  .info-label {
+    font-size: 9px;
+  }
+
+  .info-value {
+    font-size: 13px;
+  }
+
+  .social-icon {
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+
+  .social-icon .icon-wrapper {
+    width: 28px;
+    height: 28px;
+  }
+
+  .social-icon .icon-wrapper svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .social-badge {
+    font-size: 8px;
+    padding: 2px 8px;
+  }
+}
+
+/* ─── FLOATING FRUITS ────────────────────────────────────── */
+.floating-fruits {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fruit {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.06;
+  animation: floatFruit 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.fruit-1 { top: 5%; left: 3%; animation-delay: 0s; font-size: 50px; }
+.fruit-2 { top: 15%; right: 5%; animation-delay: 1.2s; font-size: 35px; }
+.fruit-3 { bottom: 30%; left: 2%; animation-delay: 2.5s; font-size: 45px; }
+.fruit-4 { bottom: 20%; right: 3%; animation-delay: 0.8s; font-size: 55px; }
+.fruit-5 { top: 50%; left: 8%; animation-delay: 1.8s; font-size: 30px; }
+
+@keyframes floatFruit {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  33% {
+    transform: translateY(-20px) rotate(10deg) scale(1.05);
+  }
+  66% {
+    transform: translateY(10px) rotate(-5deg) scale(0.95);
+  }
+}
+
 /* ═══ HERO SECTION ══════════════════════════════════════════ */
 .hero-section {
   min-height: 60vh;
@@ -618,6 +1020,7 @@ onMounted(() => {
   filter: blur(120px);
   pointer-events: none;
   animation: floatGlow 12s ease-in-out infinite;
+  will-change: transform;
 }
 
 .glow-1 {
@@ -724,7 +1127,6 @@ onMounted(() => {
   align-items: start;
 }
 
-/* ─── LEFT SIDE ────────────────────────────────────────────── */
 .contact-left {
   display: flex;
   flex-direction: column;
@@ -744,7 +1146,6 @@ onMounted(() => {
   padding: 20px 24px;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   transition: all 0.3s ease;
@@ -763,6 +1164,7 @@ onMounted(() => {
 
 .info-content {
   flex: 1;
+  min-width: 0;
 }
 
 .info-label {
@@ -790,7 +1192,6 @@ onMounted(() => {
   color: #F4A636;
 }
 
-/* ─── SOCIAL SECTION ───────────────────────────────────────── */
 .social-section {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: 40px;
@@ -861,7 +1262,6 @@ onMounted(() => {
   opacity: 1;
 }
 
-/* Instagram */
 .instagram-glow {
   background: radial-gradient(circle at 30% 30%, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
 }
@@ -877,7 +1277,6 @@ onMounted(() => {
   color: #dc2743;
 }
 
-/* YouTube */
 .youtube-glow {
   background: radial-gradient(circle at 30% 30%, #ff0000, #cc0000);
 }
@@ -893,7 +1292,6 @@ onMounted(() => {
   color: #ff0000;
 }
 
-/* Telegram */
 .telegram-glow {
   background: radial-gradient(circle at 30% 30%, #0088cc, #006699);
 }
@@ -909,7 +1307,6 @@ onMounted(() => {
   color: #0088cc;
 }
 
-/* Facebook */
 .facebook-glow {
   background: radial-gradient(circle at 30% 30%, #1877f2, #0d47a1);
 }
@@ -923,38 +1320,6 @@ onMounted(() => {
 }
 .social-icon.facebook:hover svg {
   color: #1877f2;
-}
-
-/* TikTok */
-.tiktok-glow {
-  background: radial-gradient(circle at 30% 30%, #00f2ea, #ff0050);
-}
-.social-icon.tiktok:hover {
-  border-color: #ff0050;
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 40px rgba(255, 0, 80, 0.25);
-}
-.social-icon.tiktok:hover .icon-wrapper {
-  background: rgba(255, 0, 80, 0.15);
-}
-.social-icon.tiktok:hover svg {
-  color: #ff0050;
-}
-
-/* Twitter */
-.twitter-glow {
-  background: radial-gradient(circle at 30% 30%, #1da1f2, #0d8bd9);
-}
-.social-icon.twitter:hover {
-  border-color: #1da1f2;
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 40px rgba(29, 161, 242, 0.25);
-}
-.social-icon.twitter:hover .icon-wrapper {
-  background: rgba(29, 161, 242, 0.15);
-}
-.social-icon.twitter:hover svg {
-  color: #1da1f2;
 }
 
 .social-icon span {
@@ -971,6 +1336,7 @@ onMounted(() => {
   color: rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
   letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .social-icon:hover .social-badge {
@@ -978,7 +1344,6 @@ onMounted(() => {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* ─── RIGHT SIDE ───────────────────────────────────────────── */
 .contact-right {
   position: relative;
 }
@@ -987,7 +1352,6 @@ onMounted(() => {
   padding: 48px;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 24px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
@@ -1076,7 +1440,6 @@ onMounted(() => {
   width: 100%;
 }
 
-/* ─── SUBMIT BUTTON ────────────────────────────────────────── */
 .submit-btn {
   display: flex;
   align-items: center;
@@ -1130,7 +1493,6 @@ onMounted(() => {
   transform: translateX(4px);
 }
 
-/* ─── FOOTER ────────────────────────────────────────────────── */
 .footer {
   padding: 40px 48px;
   text-align: center;
@@ -1141,73 +1503,5 @@ onMounted(() => {
   font-size: 13px;
   font-weight: 300;
   color: rgba(255, 255, 255, 0.2);
-}
-
-/* ═══ RESPONSIVE ══════════════════════════════════════════ */
-@media (max-width: 1024px) {
-  .contact-container {
-    gap: 48px;
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    padding: 0 20px;
-  }
-
-  .nav-links {
-    display: none;
-  }
-
-  .contact-container {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-
-  .contact-section {
-    padding: 20px 20px 60px;
-  }
-
-  .contact-form {
-    padding: 32px 24px;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-title {
-    font-size: 36px;
-  }
-
-  .hero-sub {
-    font-size: 15px;
-  }
-
-  .footer {
-    padding: 24px;
-  }
-
-  .social-icons {
-    grid-template-columns: 1fr;
-  }
-
-  .floating-fruits {
-    display: none;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-title {
-    font-size: 28px;
-  }
-
-  .contact-form {
-    padding: 24px 16px;
-  }
-
-  .info-card {
-    padding: 16px;
-  }
 }
 </style>

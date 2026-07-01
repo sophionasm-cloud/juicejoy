@@ -1,24 +1,30 @@
 <template>
   <div class="recipes-page">
 
-    <!-- ─── NAVBAR ──────────────────────────────────────────── -->
+    <!-- ─── NAVBAR ──────────────────────────────────────────────── -->
     <nav class="navbar">
       <div class="nav-inner">
-        <a href="/" class="nav-logo">
+        <router-link to="/" class="nav-logo">
           <span class="logo-dot" />Juicie Ride
-        </a>
+        </router-link>
 
-        <ul class="nav-links">
-          <li><a href="/">Home</a></li>
-          <li><a href="/products">Shop</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/benefits">Benefits</a></li>
-          <li><a href="/recipes" class="active">Recipes</a></li>
-          <li><a href="/contact">Contact</a></li>
+        <button class="hamburger" @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle menu">
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+          <span class="hamburger-line" :class="{ open: mobileMenuOpen }" />
+        </button>
+
+        <ul class="nav-links" :class="{ active: mobileMenuOpen }">
+          <li><router-link to="/" @click="mobileMenuOpen = false">Home</router-link></li>
+          <li><router-link to="/products" @click="mobileMenuOpen = false">Shop</router-link></li>
+          <li><router-link to="/about" @click="mobileMenuOpen = false">About</router-link></li>
+          <li><router-link to="/benefits" @click="mobileMenuOpen = false">Benefits</router-link></li>
+          <li><router-link to="/recipes" @click="mobileMenuOpen = false" class="active">Recipes</router-link></li>
+          <li><router-link to="/contact" @click="mobileMenuOpen = false">Contact</router-link></li>
         </ul>
 
         <div class="nav-actions">
-          <a href="/checkout" class="btn-order">Order Now</a>
+          <router-link to="/order" class="btn-order">Order Now</router-link>
           <div class="nav-icon" title="Search">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
               <circle cx="11" cy="11" r="8" />
@@ -99,7 +105,6 @@
             <a href="#" class="panel-cta">Try This Recipe →</a>
           </div>
 
-          <!-- Floating decoration fruits -->
           <div class="floating-fruits">
             <span v-for="(fruit, fi) in recipe.fruits" :key="fi" class="fruit-emoji" :style="`--delay: ${fi * 0.3}s; --x: ${(fi % 3) * 30 - 30}px; --y: ${Math.floor(fi / 3) * 40 - 20}px`">
               {{ fruit }}
@@ -116,7 +121,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useCartStore } from '../stores/cart.js'
 import CartDrawer from '../components/CartDrawer.vue'
 import gsap from 'gsap'
@@ -127,6 +132,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const cartStore = useCartStore()
 const cartOpen = ref(false)
+const mobileMenuOpen = ref(false)
 
 const openCart = () => {
   cartOpen.value = true
@@ -210,190 +216,157 @@ const recipes = [
 let scrollTriggerInstance = null
 
 onMounted(() => {
-  // ─── Horizontal Scroll Animation ──────────────────────────
+  nextTick(() => {
+    initAnimations()
+  })
+})
+
+function initAnimations() {
   const track = document.getElementById('horizontal-track')
   const section = document.getElementById('horizontal-scroll')
+  
+  if (!track || !section) {
+    setTimeout(initAnimations, 100)
+    return
+  }
+
   const panels = document.querySelectorAll('.panel')
   const totalPanels = panels.length
 
-  if (track && section) {
-    // Set panel width based on viewport
-    const panelWidth = window.innerWidth
-    const totalWidth = panelWidth * totalPanels
-    track.style.width = totalWidth + 'px'
-    track.style.display = 'flex'
-    track.style.flexDirection = 'row'
+  if (panels.length === 0) return
 
-    // Create the main horizontal scroll timeline
-    const tl = gsap.to(track, {
-      x: -(totalWidth - window.innerWidth),
-      ease: 'none',
+  const panelWidth = window.innerWidth
+  const totalWidth = panelWidth * totalPanels
+  track.style.width = totalWidth + 'px'
+  track.style.display = 'flex'
+  track.style.flexDirection = 'row'
+
+  const tl = gsap.to(track, {
+    x: -(totalWidth - window.innerWidth),
+    ease: 'none',
+    scrollTrigger: {
+      trigger: section,
+      pin: true,
+      scrub: 1.2,
+      start: 'top top',
+      end: () => `+=${section.offsetHeight}`,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const progress = self.progress
+        const activeIndex = Math.min(Math.floor(progress * totalPanels), totalPanels - 1)
+        updateProgress(activeIndex)
+      }
+    }
+  })
+
+  scrollTriggerInstance = tl.scrollTrigger
+
+  panels.forEach((panel, i) => {
+    const content = panel.querySelector('.panel-content')
+    const title = panel.querySelector('.panel-title')
+    const story = panel.querySelector('.panel-story')
+    const details = panel.querySelector('.panel-details')
+    const cta = panel.querySelector('.panel-cta')
+    const number = panel.querySelector('.panel-number')
+    const time = panel.querySelector('.panel-time')
+    const bg = panel.querySelector('.panel-bg img')
+    const fruits = panel.querySelectorAll('.fruit-emoji')
+
+    if (!content) return
+
+    const panelTl = gsap.timeline({
       scrollTrigger: {
-        trigger: section,
-        pin: true,
-        scrub: 1.2,
-        start: 'top top',
-        end: () => `+=${section.offsetHeight}`,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const progress = self.progress
-          const activeIndex = Math.min(Math.floor(progress * totalPanels), totalPanels - 1)
-          updateProgress(activeIndex)
-        }
+        trigger: panel,
+        containerAnimation: scrollTriggerInstance,
+        start: 'left center',
+        end: 'right center',
+        scrub: 1.5,
+        invalidateOnRefresh: true
       }
     })
 
-    scrollTriggerInstance = tl.scrollTrigger
-
-    // ─── Panel Content Animations ──────────────────────────
-    panels.forEach((panel, i) => {
-      const content = panel.querySelector('.panel-content')
-      const title = panel.querySelector('.panel-title')
-      const story = panel.querySelector('.panel-story')
-      const details = panel.querySelector('.panel-details')
-      const cta = panel.querySelector('.panel-cta')
-      const number = panel.querySelector('.panel-number')
-      const time = panel.querySelector('.panel-time')
-      const bg = panel.querySelector('.panel-bg img')
-      const fruits = panel.querySelectorAll('.fruit-emoji')
-
-      // Create a timeline for each panel's content
-      const panelTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: panel,
-          containerAnimation: scrollTriggerInstance,
-          start: 'left center',
-          end: 'right center',
-          scrub: 1.5,
-          invalidateOnRefresh: true
-        }
-      })
-
-      // Set initial states
-      gsap.set(content, { opacity: 0, x: 100, scale: 0.92, filter: 'blur(12px)' })
-      gsap.set(title, { opacity: 0, y: 50 })
-      gsap.set(story, { opacity: 0, y: 40 })
-      gsap.set(details, { opacity: 0, y: 30 })
-      gsap.set(cta, { opacity: 0, y: 20 })
-      gsap.set(number, { opacity: 0, x: -20 })
-      gsap.set(time, { opacity: 0, x: 20 })
-      gsap.set(bg, { scale: 1.1 })
-      fruits.forEach(f => {
-        gsap.set(f, { opacity: 0, scale: 0.5, rotation: -20 })
-      })
-
-      // Animate in sequence with stagger
-      panelTl
-        .to(bg, {
-          scale: 1,
-          duration: 2,
-          ease: 'power3.out'
-        })
-        .to(content, {
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          filter: 'blur(0px)',
-          duration: 1.2,
-          ease: 'power3.out'
-        })
-        .to(number, {
-          opacity: 1,
-          x: 0,
-          duration: 0.6,
-          ease: 'power2.out'
-        }, '-=0.8')
-        .to(time, {
-          opacity: 1,
-          x: 0,
-          duration: 0.6,
-          ease: 'power2.out'
-        }, '-=0.6')
-        .to(title, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out'
-        }, '-=0.5')
-        .to(story, {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: 'power2.out'
-        }, '-=0.4')
-        .to(details, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'power2.out'
-        }, '-=0.3')
-        .to(cta, {
-          opacity: 1,
-          y: 0,
-          duration: 0.5,
-          ease: 'power2.out'
-        }, '-=0.2')
-
-      // Floating fruits animation - staggered
-      fruits.forEach((f, fi) => {
-        panelTl.to(f, {
-          opacity: 1,
-          scale: 1,
-          rotation: 0,
-          duration: 0.6,
-          ease: 'back.out(2)'
-        }, '-=0.4')
-      })
-
-      // Exit animation - reverse when scrolling back
-      panelTl.to(content, {
-        opacity: 0,
-        x: -100,
-        scale: 0.92,
-        filter: 'blur(12px)',
-        duration: 0.8,
-        ease: 'power2.in'
-      }, '+=0.1')
+    gsap.set(content, { opacity: 0, x: 100, scale: 0.92, filter: 'blur(12px)' })
+    if (title) gsap.set(title, { opacity: 0, y: 50 })
+    if (story) gsap.set(story, { opacity: 0, y: 40 })
+    if (details) gsap.set(details, { opacity: 0, y: 30 })
+    if (cta) gsap.set(cta, { opacity: 0, y: 20 })
+    if (number) gsap.set(number, { opacity: 0, x: -20 })
+    if (time) gsap.set(time, { opacity: 0, x: 20 })
+    if (bg) gsap.set(bg, { scale: 1.1 })
+    fruits.forEach(f => {
+      gsap.set(f, { opacity: 0, scale: 0.5, rotation: -20 })
     })
 
-    // ─── Progress Indicator Update ──────────────────────────
-    const dots = document.querySelectorAll('.progress-dot')
-
-    function updateProgress(index) {
-      dots.forEach((dot, i) => {
-        if (i === index) {
-          dot.classList.add('active')
-        } else {
-          dot.classList.remove('active')
-        }
+    panelTl
+      .to(bg || content, { scale: 1, duration: 2, ease: 'power3.out' })
+      .to(content, {
+        opacity: 1,
+        x: 0,
+        scale: 1,
+        filter: 'blur(0px)',
+        duration: 1.2,
+        ease: 'power3.out'
       })
-    }
+      .to(number || content, { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' }, '-=0.8')
+      .to(time || content, { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' }, '-=0.6')
+      .to(title || content, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
+      .to(story || content, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.4')
+      .to(details || content, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.3')
+      .to(cta || content, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.2')
 
-    // Initial update
-    updateProgress(0)
-  }
+    fruits.forEach((f, fi) => {
+      panelTl.to(f, {
+        opacity: 1,
+        scale: 1,
+        rotation: 0,
+        duration: 0.6,
+        ease: 'back.out(2)'
+      }, '-=0.4')
+    })
 
-  // ─── Handle resize ──────────────────────────────────────────
-  const handleResize = () => {
-    ScrollTrigger.refresh()
-  }
-  window.addEventListener('resize', handleResize)
-
-  // ─── Cleanup on unmount ──────────────────────────────────
-  onUnmounted(() => {
-    window.removeEventListener('resize', handleResize)
-    if (scrollTriggerInstance) {
-      scrollTriggerInstance.kill()
-    }
-    ScrollTrigger.getAll().forEach(st => st.kill())
+    panelTl.to(content, {
+      opacity: 0,
+      x: -100,
+      scale: 0.92,
+      filter: 'blur(12px)',
+      duration: 0.8,
+      ease: 'power2.in'
+    }, '+=0.1')
   })
+
+  const dots = document.querySelectorAll('.progress-dot')
+
+  function updateProgress(index) {
+    dots.forEach((dot, i) => {
+      if (i === index) {
+        dot.classList.add('active')
+      } else {
+        dot.classList.remove('active')
+      }
+    })
+  }
+
+  updateProgress(0)
+}
+
+const handleResize = () => {
+  ScrollTrigger.refresh()
+}
+
+window.addEventListener('resize', handleResize)
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  if (scrollTriggerInstance) {
+    scrollTriggerInstance.kill()
+  }
+  ScrollTrigger.getAll().forEach(st => st.kill())
 })
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=Inter:wght@300;400;500;600&display=swap');
 
-/* ═══ ROOT ══════════════════════════════════════════════════ */
 .recipes-page {
   background: #000;
   color: #fff;
@@ -453,9 +426,11 @@ onMounted(() => {
   gap: 36px;
   list-style: none;
   align-items: center;
+  margin: 0;
+  padding: 0;
 }
 
-.nav-links a {
+.nav-links a, .nav-links router-link {
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0.1em;
@@ -467,7 +442,7 @@ onMounted(() => {
   transition: color 0.3s ease;
 }
 
-.nav-links a::after {
+.nav-links a::after, .nav-links router-link::after {
   content: '';
   position: absolute;
   bottom: -2px;
@@ -478,12 +453,11 @@ onMounted(() => {
   transition: width 0.3s ease;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
+.nav-links a:hover, .nav-links router-link:hover {
   color: rgba(255, 255, 255, 0.90);
 }
 
-.nav-links a.active::after {
+.nav-links a.active::after, .nav-links router-link.active::after {
   width: 100%;
 }
 
@@ -550,6 +524,211 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ─── HAMBURGER MENU ──────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 10;
+}
+
+.hamburger-line {
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger-line.open:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger-line.open:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger-line.open:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ─── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 75%;
+    max-width: 320px;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    background: rgba(10, 10, 20, 0.98);
+    backdrop-filter: blur(20px);
+    padding: 40px 30px;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 0;
+    z-index: 5;
+    box-shadow: -10px 0 60px rgba(0, 0, 0, 0.6);
+  }
+
+  .nav-links.active {
+    right: 0;
+  }
+
+  .nav-links a, .nav-links router-link {
+    font-size: 18px;
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    width: 100%;
+    text-align: center;
+  }
+
+  .nav-links a:hover, .nav-links router-link:hover {
+    color: #FF8C42 !important;
+    background: rgba(255, 140, 66, 0.1);
+  }
+
+  .nav-links a::after, .nav-links router-link::after {
+    display: none;
+  }
+
+  .btn-order {
+    padding: 8px 16px;
+    font-size: 10px;
+  }
+
+  .nav-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .panel-content {
+    padding: 24px 20px;
+    margin: 0 16px;
+    border-radius: 16px;
+  }
+
+  .panel-title {
+    font-size: 24px;
+  }
+
+  .panel-story {
+    font-size: 14px;
+  }
+
+  .detail-row {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-indicator {
+    right: 16px;
+    gap: 14px;
+  }
+
+  .dot-label {
+    display: none !important;
+  }
+
+  .dot-number {
+    font-size: 10px;
+  }
+
+  .hero-title {
+    font-size: 40px;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0 12px;
+  }
+
+  .nav-logo {
+    font-size: 18px;
+  }
+
+  .btn-order {
+    padding: 6px 12px;
+    font-size: 9px;
+  }
+
+  .nav-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .cart-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 8px;
+    top: -3px;
+    right: -3px;
+  }
+
+  .hamburger-line {
+    width: 20px;
+    height: 2px;
+  }
+
+  .hamburger {
+    gap: 4px;
+    padding: 6px;
+  }
+
+  .nav-links {
+    width: 80%;
+    gap: 20px;
+    padding: 30px;
+  }
+
+  .nav-links a, .nav-links router-link {
+    font-size: 16px;
+  }
+
+  .panel-content {
+    padding: 16px;
+  }
+
+  .panel-title {
+    font-size: 20px;
+  }
+
+  .panel-story {
+    font-size: 13px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
 }
 
 /* ═══ HERO SECTION ══════════════════════════════════════════ */
@@ -623,7 +802,6 @@ onMounted(() => {
   margin: 0 auto;
 }
 
-/* ═══ HORIZONTAL SCROLL SECTION ════════════════════════════ */
 .horizontal-scroll-section {
   position: relative;
   height: 100vh;
@@ -638,7 +816,6 @@ onMounted(() => {
   will-change: transform;
 }
 
-/* ═══ PANELS ════════════════════════════════════════════════ */
 .panel {
   width: 100vw;
   height: 100vh;
@@ -794,7 +971,6 @@ onMounted(() => {
   border-color: #fff;
 }
 
-/* ─── FLOATING FRUITS ────────────────────────────────────── */
 .floating-fruits {
   position: absolute;
   inset: 0;
@@ -821,7 +997,6 @@ onMounted(() => {
   }
 }
 
-/* ─── PROGRESS INDICATOR ────────────────────────────────── */
 .progress-indicator {
   position: fixed;
   right: 40px;
@@ -886,79 +1061,5 @@ onMounted(() => {
 .progress-dot.active .dot-label {
   color: rgba(255, 255, 255, 0.5);
   display: inline;
-}
-
-/* ═══ RESPONSIVE ══════════════════════════════════════════ */
-@media (max-width: 1024px) {
-  .panel-content {
-    padding: 36px;
-  }
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    padding: 0 20px;
-  }
-
-  .nav-links {
-    display: none;
-  }
-
-  .panel-content {
-    padding: 24px 20px;
-    margin: 0 16px;
-    border-radius: 16px;
-  }
-
-  .panel-title {
-    font-size: 24px;
-  }
-
-  .panel-story {
-    font-size: 14px;
-  }
-
-  .detail-row {
-    grid-template-columns: 1fr;
-  }
-
-  .progress-indicator {
-    right: 16px;
-    gap: 14px;
-  }
-
-  .dot-label {
-    display: none !important;
-  }
-
-  .dot-number {
-    font-size: 10px;
-  }
-
-  .hero-title {
-    font-size: 40px;
-  }
-
-  .hero-sub {
-    font-size: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .panel-content {
-    padding: 16px;
-  }
-
-  .panel-title {
-    font-size: 20px;
-  }
-
-  .panel-story {
-    font-size: 13px;
-  }
-
-  .hero-title {
-    font-size: 32px;
-  }
 }
 </style>

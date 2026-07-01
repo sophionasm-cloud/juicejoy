@@ -1,7 +1,7 @@
 <template>
   <div class="home">
 
-    <!-- ─── NAVBAR (NEW) ─────────────────────────────────────── -->
+    <!-- ─── NAVBAR ─────────────────────────────────────── -->
     <Navbar @open-cart="cartOpen = true" />
 
     <!-- ─── HERO ───────────────────────────────────────── -->
@@ -35,7 +35,9 @@
           <router-link to="/products" class="btn-primary-link">
             <button class="btn-primary">Shop Now</button>
           </router-link>
-          <button class="btn-secondary">Learn More</button>
+          <a href="/about" class="btn-secondary-link">
+            <button class="btn-secondary">Learn More</button>
+          </a>
         </div>
       </div>
 
@@ -377,6 +379,10 @@ export default {
 }
 
 .btn-primary-link {
+  text-decoration: none;
+}
+
+.btn-secondary-link {
   text-decoration: none;
 }
 

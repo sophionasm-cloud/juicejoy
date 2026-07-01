@@ -1,12 +1,10 @@
 <?php
 
-use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrderController;
 
-Route::prefix('orders')->group(function () {
-    Route::post('/', [OrderController::class, 'store']);
-    Route::get('/', [OrderController::class, 'index']);
-    Route::get('/{orderNumber}', [OrderController::class, 'show']);
-    Route::put('/{orderNumber}/status', [OrderController::class, 'updateStatus']);
-    Route::delete('/{orderNumber}', [OrderController::class, 'destroy']);
-});
+Route::post('/orders', [OrderController::class, 'store']);
+Route::get('/orders', [OrderController::class, 'index']);
+Route::get('/orders/{orderNumber}', [OrderController::class, 'show']);
+Route::put('/orders/{orderNumber}/status', [OrderController::class, 'updateStatus']);
+Route::delete('/orders/{orderNumber}', [OrderController::class, 'destroy']);
