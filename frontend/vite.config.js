@@ -3,15 +3,12 @@ import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    tailwindcss(),
-  ],
+  plugins: [vue(), tailwindcss()],
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
+        target: process.env.VITE_API_URL || 'http://localhost:8000',
+        changeOrigin: true
       }
     }
   }
